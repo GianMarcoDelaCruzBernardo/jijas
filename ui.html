@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Football AI Pro</title><style>
+:root{--bg:#0b1015;--hd:#0c1a2b;--panel:#101820;--row:#0e161d;--line:#1d2830;--tx:#e6edf3;--mut:#7d8b98;
+--acc:#00b248;--red:#e2373f;--gold:#f5c518;--tv:#3b82f6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:13px/1.4 'Segoe UI',system-ui,sans-serif}
+header{background:var(--hd);display:flex;align-items:center;gap:18px;padding:0 18px;height:52px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.logo{font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px}.logo b{color:var(--acc)}
+.ntab{color:var(--mut);padding:16px 4px;cursor:pointer;border-bottom:3px solid transparent}.ntab.on{color:#fff;border-color:var(--red)}
+.sp{flex:1}
+.wrap{display:flex;max-width:1180px;margin:0 auto}
+.side{width:230px;flex:none;padding:10px 0;border-right:1px solid var(--line);position:sticky;top:52px;height:calc(100vh - 52px);overflow:auto}
+.side h4{color:var(--mut);font-size:11px;padding:8px 14px;margin:0;text-transform:uppercase}
+.lnk{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--tx)}.lnk:hover,.lnk.on{background:#13202e;color:var(--acc)}
+.main{flex:1;padding:14px 18px;min-width:0}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{background:var(--panel);border:1px solid var(--line);color:var(--mut);padding:5px 14px;border-radius:4px;cursor:pointer;font-size:12px}
+.tab.on{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+.lgb{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-bottom:10px;overflow:hidden}
+.lgh{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0d1722;font-size:12px;color:var(--mut);border-bottom:1px solid var(--line)}
+.lgh b{color:var(--tx);font-weight:600}.lgh .sp{flex:1}.lgh a{color:var(--tv);text-decoration:none;font-size:11px}
+.r{display:grid;grid-template-columns:26px 56px 22px 1fr 22px 1fr 70px 90px;align-items:center;gap:6px;padding:7px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+.r:hover{background:#13202e}.r:last-child{border:none}
+.star{color:var(--mut);font-size:14px}.star.on{color:var(--gold)}
+.tm{font-size:11px;color:var(--mut);text-align:center}.tm.live{color:var(--red);font-weight:700}
+.flag{font-size:14px;text-align:center}
+.team{display:flex;align-items:center;gap:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.team.away{justify-content:flex-end}
+.team img{width:18px;height:18px;object-fit:contain;flex:none}
+.sc{font-weight:700;text-align:center;font-size:13px;color:var(--mut)}
+.sc.win{color:var(--tx)}.sc.lose{color:var(--mut)}
+.odds{display:flex;gap:4px;justify-content:flex-end}
+.od{background:#0a141c;border:1px solid var(--line);border-radius:3px;padding:2px 6px;font-size:11px;color:var(--mut);min-width:26px;text-align:center}
+.od.hi{color:var(--acc);border-color:#14502c}
+.empty{padding:50px;text-align:center;color:var(--mut)}
+.err{color:var(--red)}
+#ov{position:fixed;inset:0;background:#000c;z-index:40;display:none}#ov.on{display:block}
+#dr{position:fixed;top:0;right:0;bottom:0;width:min(1040px,100%);background:var(--bg);border-left:1px solid var(--line);overflow:auto;padding:16px}
+.x{position:fixed;top:10px;right:14px;background:none;border:0;color:var(--mut);font-size:26px;cursor:pointer;z-index:5}
+.dhd{display:flex;align-items:center;justify-content:center;gap:14px;font-size:20px;font-weight:700;padding:8px 0}
+.dhd img{width:30px;height:30px;object-fit:contain}
+.dhd .sub{font-size:12px;color:var(--mut);font-weight:400;text-align:center}
+.ptabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:10px 0}
+.pt{padding:8px 14px;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent}.pt.on{color:var(--acc);border-color:var(--acc)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.row2{grid-template-columns:1fr}.side{display:none}}
+.form{display:flex;gap:4px;margin:4px 0}
+.f{width:22px;height:22px;border-radius:4px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.f.G{background:#0d3d1f;color:#3ddc84}.f.E{background:#2a2a12;color:#d8c34a}.f.P{background:#3d1416;color:#ff6b6b}
+.mt{width:100%;border-collapse:collapse;font-size:12px}
+.mt th{color:var(--mut);text-align:left;font-weight:500;padding:5px 6px;border-bottom:1px solid var(--line);font-size:11px}
+.mt td{padding:5px 6px;border-bottom:1px solid var(--line)}
+.bar{background:var(--line);height:6px;border-radius:3px;overflow:hidden;width:90px;display:inline-block;vertical-align:middle}
+.bar i{display:block;height:100%;background:var(--acc)}
+.bar i.u{background:var(--red)}
+.tag{font-size:10px;padding:1px 6px;border-radius:3px;background:#14502c;color:#7dffb0;font-weight:700}
+.tag.no{background:#3a1a1a;color:#ff9a9a}
+.out{color:var(--gold);font-size:10px}
+.an h2{color:var(--acc);font-size:13px;margin:14px 0 6px;border-bottom:1px solid var(--line);padding-bottom:3px}
+.an ul{margin:6px 0;padding-left:18px}.an li{margin:3px 0}
+.btn{background:var(--acc);color:#04130c;border:0;padding:9px 16px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px}
+.btn:disabled{opacity:.5}
+.steps{background:#0a1218;border:1px solid var(--line);border-radius:6px;padding:10px;font-family:Consolas,monospace;font-size:11px;max-height:200px;overflow:auto;margin:8px 0}
+.st{padding:2px 0;border-bottom:1px solid #16222c}.st.done{color:var(--acc)}.st.running{color:var(--gold)}.st.error{color:var(--red)}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:s 1s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes s{to{transform:rotate(360deg)}}
+</style></head><body>
+<header><div class="logo">⚽ <span>Football <b>AI</b> Pro</span></div>
+<div class="ntab on">RESULTADOS</div><div class="ntab">NOTICIAS</div><div class="sp"></div>
+<select id="mdl" style="background:var(--panel);color:var(--tx);border:1px solid var(--line);padding:6px;border-radius:5px"></select>
+<button class="tab" onclick="load()">Actualizar</button></header>
+<div class="wrap"><nav class="side" id="side"></nav><main class="main">
+<div class="tabs" id="tabs"></div><div id="list"><div class="empty"><span class="spin"></span>Cargando...</div></div>
+</main></div>
+<div id="ov"><button class="x" onclick="closeD()">×</button><div id="dr"></div></div>
+<script>
+const T=[["all","TODOS"],["in","EN DIRECTO"],["odds","CUOTAS"],["post","FINALIZADOS"],["pre","PRÓXIMOS"]];
+let M=[],flt="all",ligSel=null,favs=new Set(JSON.parse(localStorage.fav||"[]")),cache={},cur=null,poll=null;
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hm=i=>new Date(i).toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+const img=u=>u?`<img src="${u}" onerror="this.style.display='none'">`:'';
+function tabs(){$("#tabs").innerHTML=T.map(([k,n])=>`<div class="tab ${k===flt?'on':''}" onclick="flt='${k}';tabs();render()">${n}</div>`).join("")}
+function side(){
+ const L=[...new Map(M.map(m=>[m.liga,m.flag])).entries()];
+ $("#side").innerHTML=`<h4>Ligas ancladas</h4>`+L.map(([lg,fl])=>`<div class="lnk ${ligSel===lg?'on':''}" onclick="ligSel=ligSel==='${lg.replace(/'/g,"\\'")}'?null:'${lg.replace(/'/g,"\\'")}';side();render()"><span>${fl}</span><span>${esc(lg)}</span></div>`).join("")}
+function oddsCell(m){
+ if(!m.dec_home) return `<span class="od">—</span>`;
+ return `<div class="odds"><span class="od ${m.dec_home<=m.dec_away?'hi':''}">${m.dec_home}</span><span class="od">${m.dec_draw||'—'}</span><span class="od ${m.dec_away<m.dec_home?'hi':''}">${m.dec_away}</span></div>`}
+function render(){
+ const L=M.filter(m=>(ligSel?m.liga===ligSel:true)&&(flt==="all"||(flt==="odds"?!!m.dec_home:m.state===flt)));
+ if(!L.length){$("#list").innerHTML='<div class="empty">No hay partidos para este filtro.</div>';return}
+ const by={};L.forEach(m=>(by[m.liga]=by[m.liga]||[]).push(m));
+ $("#list").innerHTML=Object.entries(by).map(([lg,ms])=>{
+  const fl=ms[0].flag;
+  return `<div class="lgb"><div class="lgh"><span>${fl}</span><b>${esc(lg)}</b><span class="sp"></span><a>Clasificación</a></div>`+
+  ms.map(m=>{const i=M.indexOf(m),lv=m.state==="in",post=m.state==="post";
+   const tm=lv?`<span class="tm live">${esc(m.clock||'EN VIVO')}</span>`:post?`<span class="tm">Final.</span>`:`<span class="tm">${hm(m.iso)}</span>`;
+   const sc=post||lv?`<span class="sc ${m.hs>m.as?'win':m.hs<m.as?'lose':''}">${m.hs} - ${m.as}</span>`:`<span class="sc">–</span>`;
+   return `<div class="r" onclick="openM(${i})"><span class="star ${favs.has(m.id)?'on':''}" onclick="event.stopPropagation();fav('${m.id}')">★</span>
+   ${tm}<span class="flag">${fl}</span><div class="team">${img(m.homeLogo)}<span>${esc(m.home)}</span></div>
+   <span class="flag">${fl}</span><div class="team away"><span>${esc(m.away)}</span>${img(m.awayLogo)}</div>
+   <span class="tm" style="font-size:10px">${m.state==='pre'?'PREVIEW':m.state==='in'?'LIVE':'—'}</span>${oddsCell(m)}</div>`}).join("")+`</div>`}).join("")}
+function fav(id){favs.has(id)?favs.delete(id):favs.add(id);localStorage.fav=JSON.stringify([...favs]);render()}
+async function load(){
+ $("#list").innerHTML='<div class="empty"><span class="spin"></span>Cargando...</div>';
+ try{M=await (await fetch("/api/matches")).json();side();render()}
+ catch(e){$("#list").innerHTML=`<div class="empty err">Error: ${esc(e.message)}</div>`}}
+function md(s){s=esc(s).replace(/^##\s*(.+)$/gm,"<h2>$1</h2>").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
+ .replace(/^\s*[-•]\s+(.+)$/gm,"<li>$1</li>").replace(/(<li>[\s\S]*?<\/li>)(\s*<li>)/g,"$1$2")
+ .replace(/(<li>[\s\S]*<\/li>)/g,m=>"<ul>"+m+"</ul>").replace(/\n/g,"<br>");return s.replace(/(<\/h2>|<\/ul>)<br>/g,"$1")}
+function formBox(H){return`<div class="form">${H.map(x=>`<span class="f ${x.r}">${x.r}</span>`).join("")}</div>`}
+function famTable(f){
+ return`<table class="mt"><tr><th>Mercado</th><th>Consenso</th><th>Desv.</th><th>A favor</th><th>Conf.</th><th>Probs 22 modelos</th></tr>`+
+ f.rows.map(r=>`<tr><td>${esc(r.label)}</td><td><b>${r.clean_mean}%</b> <span class="bar"><i class="${r.clean_mean>=50?'':'u'}" style="width:${r.clean_mean}%"></i></span></td>
+ <td>${r.sd}</td><td>${r.agree}/${r.n}</td><td>${r.conf}%</td>
+ <td style="font-size:10px;color:var(--mut)">${r.probs.map((p,i)=>`<span class="${r.outliers.includes(i)?'out':''}">${p}</span>`).join(' · ')}</td></tr>`).join("")+`</table>`}
+async function openM(i){
+ const m=M[i];cur=m.id;const c=cache[m.id]=cache[m.id]||{};
+ $("#dr").innerHTML=`<div class="dhd">${img(m.homeLogo)}<div>${esc(m.home)}<div class="sub">${esc(m.liga)} · ${new Date(m.iso).toLocaleString('es-PE')}</div></div>
+ <span>${m.state==='pre'?'vs':m.hs+' - '+m.as}</span><div>${esc(m.away)}<div class="sub">${m.state==='in'?'<span class="tm live">'+esc(m.clock)+'</span>':''}</div></div>${img(m.awayLogo)}</div>
+ <div class="ptabs"><div class="pt on" onclick="ptab('ia',this)">IA</div><div class="pt" onclick="ptab('modelos',this)">Modelos</div>
+ <div class="pt" onclick="ptab('cuotas',this)">Cuotas</div><div class="pt" onclick="ptab('forma',this)">Forma</div></div>
+ <div id="body"><div class="empty"><span class="spin"></span>Ejecutando 22 modelos + Ollama...</div></div>`;
+ $("#ov").classList.add("on");
+ if(!c.job){try{const r=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({match:m,model:$("#mdl").value})});c.job=(await r.json()).job;poll=setInterval(()=>pollJob(c.job),1000)}
+  catch(e){$("#body").innerHTML=`<div class="empty err">${esc(e.message)}</div>`}}
+ else pollJob(c.job)}
+function ptab(k,el){document.querySelectorAll(".pt").forEach(p=>p.classList.remove("on"));el.classList.add("on");paint(k)}
+function paint(k){
+ const c=cache[cur];if(!c||!c.data){$("#body").innerHTML='<div class="empty"><span class="spin"></span>Esperando resultados...</div>';return}
+ const d=c.data;
+ if(k==="ia")$("#body").innerHTML=`<div class="card an">${md(d.ollama_text||'Ollama sin respuesta')}</div>`;
+ else if(k==="modelos")$("#body").innerHTML=d.fams.map(f=>`<div class="card"><h3>${esc(f.title)}</h3>${famTable(f)}</div>`).join("");
+ else if(k==="cuotas")$("#body").innerHTML=`<div class="card"><h3>Cuotas Bet365 (vía ESPN)</h3><table class="mt">
+  <tr><th>1X2</th><th>Local</th><th>Empate</th><th>Visitante</th></tr>
+  <tr><td>Decimal</td><td>${d.odds.dec_home||'—'}</td><td>${d.odds.dec_draw||'—'}</td><td>${d.odds.dec_away||'—'}</td></tr>
+  <tr><td>Implícita %</td><td>${d.odds.dec_home?(100/d.odds.dec_home).toFixed(1):'—'}</td><td>${d.odds.dec_draw?(100/d.odds.dec_draw).toFixed(1):'—'}</td><td>${d.odds.dec_away?(100/d.odds.dec_away).toFixed(1):'—'}</td></tr></table>
+  <h3 style="margin-top:14px">Value bets (modelo − implícita ≥ 5%)</h3>
+  ${d.value.length?`<table class="mt"><tr><th>Mercado</th><th>Modelo</th><th>Cuota</th><th>Impl.</th><th>Edge</th></tr>`+
+   d.value.map(v=>`<tr><td>${esc(v.mkt)}</td><td>${v.p}%</td><td>${v.cuota}</td><td>${v.impl}%</td><td><span class="tag">+${v.edge}%</span></td></tr>`).join("")+`</table>`:'<div class="empty" style="padding:14px">Sin edge contra Bet365.</div>'}</div>`;
+ else $("#body").innerHTML=`<div class="card"><h3>Últimos partidos</h3><b>${esc(M.find(x=>x.id===cur).home)}</b>${formBox(d.history.home)}
+  <b>${esc(M.find(x=>x.id===cur).away)}</b>${formBox(d.history.away)}</div>
+  <div class="card"><h3>Promedios reales</h3><table class="mt"><tr><th>Mercado</th><th>Local a favor</th><th>Local en contra</th><th>Visit. a favor</th><th>Visit. en contra</th></tr>
+  ${Object.entries(d.averages).map(([k,v])=>`<tr><td>${esc(TITLES[k]||k)}</td><td>${v.h_for}</td><td>${v.h_ag}</td><td>${v.a_for}</td><td>${v.a_ag}</td></tr>`).join("")}</table></div>`}
+const TITLES={goals:"Goles",corners:"Córners",cards:"Tarjetas",fouls:"Faltas",shots:"Remates",sot:"Remates al arco"};
+async function pollJob(id){
+ try{const r=await fetch("/api/job/"+id);const j=await r.json();if(j.error)return;
+  const c=cache[cur];if(!c)return;
+  c.steps=j.steps;
+  if(j.status==="error"){$("#body").innerHTML=`<div class="empty err">${esc(j.error)}</div>`;clearInterval(poll);return}
+  if(j.status==="done"){clearInterval(poll);c.data=j;paint(document.querySelector(".pt.on").textContent.toLowerCase().replace('ia','ia'))}
+ }catch(e){}}
+async function init(){
+ tabs();side();
+ try{const ms=await (await fetch("/api/models")).json();$("#mdl").innerHTML=ms.map(n=>`<option>${esc(n)}</option>`).join("");
+  const pf=ms.find(n=>n.startsWith("qwen2.5"));if(pf)$("#mdl").value=pf}catch(e){$("#mdl").innerHTML="<option>qwen2.5</option>"}
+ load();setInterval(()=>{if(!$("#ov").classList.contains("on"))load()},60000)}
+init();
+</script></body></html>

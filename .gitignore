@@ -1,0 +1,23 @@
+# SECRETOS - nunca subir
+.env
+*.session
+*.session-journal
+# Entornos y cache
+venv/
+venv_telegram/
+.venv/
+__pycache__/
+*.pyc
+# Datos locales y generados
+predictions/
+predictions_log.json
+logs/
+backups/
+data/
+catalog/
+temp_images/
+ocr_cache.json
+social_sentiment.json
+*.bak
+*.log
+*.dmp

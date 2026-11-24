@@ -1,0 +1,5 @@
+# Opcional: scraper de Telegram (OCR de imagenes). Instalar en un venv APARTE:
+#   python -m venv venv_telegram ; .\venv_telegram\Scripts\pip install -r requirements-telegram.txt
+telethon==1.46.0
+python-dotenv==1.2.4
+easyocr==1.7.2
